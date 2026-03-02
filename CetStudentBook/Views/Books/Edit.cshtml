@@ -1,0 +1,98 @@
+@*
+    Edit view receives a Book object already populated from the database.
+    The controller loads it via: _context.Books.Find(id)
+    On POST, model binding fills a Book object from form fields and we call Update().
+*@
+@model CetStudentBook.Models.Book
+
+@{
+    ViewData["Title"] = "Edit Book";
+}
+
+<h1>Edit Book</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit" method="post">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            @*
+                CRITICAL: We must include the Id as a hidden field.
+                When the form posts back, the controller needs to know WHICH book to update.
+                Without this, Id would be 0 (default int) and the update would fail.
+
+                <input type="hidden"> is not shown to the user but IS submitted with the form.
+                asp-for="Id" sets value="@Model.Id" automatically.
+            *@
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Author" class="form-label"></label>
+                <input asp-for="Author" class="form-control" />
+                <span asp-validation-for="Author" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="PublishDate" class="form-label"></label>
+                @*
+                    .ToString("yyyy-MM-dd") formats the date as "2020-01-15".
+                    HTML date inputs require exactly this format (ISO 8601).
+                    If the format is wrong, the date picker won't show the pre-filled value.
+                *@
+                <input asp-for="PublishDate" class="form-control" type="date"
+                       value="@Model.PublishDate.ToString("yyyy-MM-dd")" />
+                <span asp-validation-for="PublishDate" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="PageCount" class="form-label"></label>
+                <input asp-for="PageCount" class="form-control" type="number" min="1" max="10000" />
+                <span asp-validation-for="PageCount" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3 form-check">
+                <input asp-for="IsSecondHand" class="form-check-input" />
+                <label asp-for="IsSecondHand" class="form-check-label"></label>
+                <span asp-validation-for="IsSecondHand" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-warning">Update Book</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@*
+    Show current book info as a reference card on the right side.
+    This is purely cosmetic — it helps the user see what they're changing.
+*@
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card bg-light">
+            <div class="card-body">
+                <small class="text-muted">Current saved values:</small>
+                <ul class="mb-0 mt-1 small">
+                    <li><strong>Name:</strong> @Model.Name</li>
+                    <li><strong>Author:</strong> @Model.Author</li>
+                    <li><strong>Published:</strong> @Model.PublishDate.ToString("dd MMM yyyy")</li>
+                    <li><strong>Pages:</strong> @Model.PageCount</li>
+                    <li><strong>Second Hand:</strong> @(Model.IsSecondHand ? "Yes" : "No")</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

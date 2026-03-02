@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace CetStudentBook.Data.Migrations
+namespace CetStudentBook.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260302085223_AddBooks")]
-    partial class AddBooks
+    [Migration("20260302103444_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

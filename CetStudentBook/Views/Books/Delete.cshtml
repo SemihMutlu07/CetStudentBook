@@ -1,0 +1,70 @@
+@*
+    Delete confirmation view.
+    Always show a confirmation step before deleting data — never delete on a GET request.
+
+    WHY? If delete were a GET (/Books/Delete/3), a malicious link in an email or webpage
+    could trick a logged-in user's browser into deleting data without them knowing.
+    Using POST + antiforgery token prevents this (CSRF protection).
+
+    Flow:
+      GET  /Books/Delete/3  → Shows this confirmation page
+      POST /Books/DeleteConfirmed → Actually deletes and redirects to Index
+*@
+@model CetStudentBook.Models.Book
+
+@{
+    ViewData["Title"] = "Delete Book";
+}
+
+<h1 class="text-danger">Delete Book</h1>
+<hr />
+
+<div class="alert alert-warning">
+    <strong>Are you sure you want to delete this book?</strong>
+    This action cannot be undone.
+</div>
+
+@*
+    We show the book details so the user can confirm they're deleting the right one.
+*@
+<div class="card mb-4" style="max-width: 500px;">
+    <div class="card-header bg-danger text-white">
+        Book to be deleted
+    </div>
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-4">Name</dt>
+            <dd class="col-sm-8">@Model.Name</dd>
+
+            <dt class="col-sm-4">Author</dt>
+            <dd class="col-sm-8">@Model.Author</dd>
+
+            <dt class="col-sm-4">Publish Date</dt>
+            <dd class="col-sm-8">@Model.PublishDate.ToString("dd MMM yyyy")</dd>
+
+            <dt class="col-sm-4">Page Count</dt>
+            <dd class="col-sm-8">@Model.PageCount</dd>
+
+            <dt class="col-sm-4">Second Hand</dt>
+            <dd class="col-sm-8">@(Model.IsSecondHand ? "Yes" : "No")</dd>
+        </dl>
+    </div>
+</div>
+
+@*
+    The form posts to the "DeleteConfirmed" action.
+    We pass the Id in a hidden field — the controller needs it to find and remove the record.
+
+    Why a separate action name "DeleteConfirmed"?
+    Because both GET and POST would go to "Delete" otherwise.
+    ASP.NET MVC doesn't allow two methods with the same name and same parameters,
+    so we rename the POST version to "DeleteConfirmed".
+    (Some developers use [ActionName("Delete")] attribute instead — same result.)
+*@
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-danger">Yes, Delete It</button>
+        <a asp-action="Index" class="btn btn-secondary">No, Go Back</a>
+    </div>
+</form>

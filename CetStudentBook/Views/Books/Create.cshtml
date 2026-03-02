@@ -1,0 +1,101 @@
+@*
+    This view is for CREATING a new book.
+    The model is a single Book object (not a list).
+    When GET /Books/Create is called, model is empty (new Book).
+    When POST fails validation, the controller returns View(book) — same model with errors.
+*@
+@model CetStudentBook.Models.Book
+
+@{
+    ViewData["Title"] = "Add New Book";
+}
+
+<h1>Add New Book</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        @*
+            asp-action="Create" + method="post" → submits to POST /Books/Create
+            asp-antiforgery is added automatically when you use asp-action on a <form>.
+            The hidden __RequestVerificationToken field prevents CSRF attacks.
+        *@
+        <form asp-action="Create" method="post">
+
+            @*
+                asp-validation-summary shows ALL model-level errors in one place.
+                "ModelOnly" means: only errors not tied to a specific field.
+                Example: if you call ModelState.AddModelError("", "some general error")
+            *@
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                @*
+                    asp-for="Name" does THREE things at once:
+                    1. Sets the <label> text from the property name (or [DisplayName])
+                    2. Sets name="Name" on the <input> for model binding
+                    3. Sets id="Name" for accessibility
+                *@
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" placeholder="e.g. Clean Code" />
+                @*
+                    asp-validation-for shows the error message for just this field.
+                    If Name is empty and [Required] is on the model, this shows:
+                    "The Name field is required."
+                *@
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Author" class="form-label"></label>
+                <input asp-for="Author" class="form-control" placeholder="e.g. Robert C. Martin" />
+                <span asp-validation-for="Author" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="PublishDate" class="form-label"></label>
+                @*
+                    type="date" tells the browser to show a date picker.
+                    The [DataType(DataType.Date)] annotation on the model
+                    also helps ASP.NET render this correctly.
+                *@
+                <input asp-for="PublishDate" class="form-control" type="date" />
+                <span asp-validation-for="PublishDate" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="PageCount" class="form-label"></label>
+                <input asp-for="PageCount" class="form-control" type="number" min="1" max="10000" />
+                <span asp-validation-for="PageCount" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3 form-check">
+                @*
+                    Checkboxes are special in ASP.NET MVC.
+                    asp-for on a checkbox renders TWO inputs:
+                    1. <input type="checkbox" name="IsSecondHand" value="true">
+                    2. <input type="hidden" name="IsSecondHand" value="false">
+                    This ensures "false" is posted even when unchecked.
+                *@
+                <input asp-for="IsSecondHand" class="form-check-input" />
+                <label asp-for="IsSecondHand" class="form-check-label"></label>
+                <span asp-validation-for="IsSecondHand" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-success">Save Book</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@*
+    @section Scripts allows us to inject JavaScript at the bottom of the page.
+    _ValidationScriptsPartial loads jquery.validate.js + jquery.validate.unobtrusive.js
+    These read the data-val-* attributes ASP.NET adds to inputs and run client-side validation
+    BEFORE the form even submits — instant feedback for the user.
+*@
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
