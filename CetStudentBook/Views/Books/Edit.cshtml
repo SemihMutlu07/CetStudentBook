@@ -58,6 +58,20 @@
                 <span asp-validation-for="PageCount" class="text-danger"></span>
             </div>
 
+            <div class="mb-3">
+                <label asp-for="Price" class="form-label"></label>
+                <input asp-for="Price" class="form-control" type="number" step="0.01" min="0.01" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="CategoryId" class="form-label">Category</label>
+                <select asp-for="CategoryId" asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))" class="form-select">
+                    <option value="">-- Select Category --</option>
+                </select>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+
             <div class="mb-3 form-check">
                 <input asp-for="IsSecondHand" class="form-check-input" />
                 <label asp-for="IsSecondHand" class="form-check-label"></label>

@@ -37,6 +37,8 @@ else
                 <th>Author</th>
                 <th>Publish Date</th>
                 <th>Page Count</th>
+                <th>Price</th>
+                <th>Category</th>
                 <th>Second Hand?</th>
                 <th>Actions</th>
             </tr>
@@ -52,15 +54,18 @@ else
                     @* .ToString("dd MMM yyyy") formats the date as "01 Jan 2020" *@
                     <td>@book.PublishDate.ToString("dd MMM yyyy")</td>
                     <td>@book.PageCount</td>
+                    <td>@book.Price.ToString("C")</td>
+                    <td>@(book.Category?.Name ?? "-")</td>
                     <td>
-                        @* Ternary in Razor: condition ? "if true" : "if false" *@
                         @(book.IsSecondHand ? "Yes" : "No")
                     </td>
                     <td>
-                        @* asp-route-id passes the book's Id as a route parameter.
-                           Generates: /Books/Edit/3  (if id is 3) *@
                         <a asp-action="Edit" asp-route-id="@book.Id" class="btn btn-sm btn-warning">Edit</a>
                         <a asp-action="Delete" asp-route-id="@book.Id" class="btn btn-sm btn-danger">Delete</a>
+                        <form asp-controller="Cart" asp-action="Add" method="post" style="display:inline">
+                            <input type="hidden" name="bookId" value="@book.Id" />
+                            <button type="submit" class="btn btn-sm btn-primary">Add to Cart</button>
+                        </form>
                     </td>
                 </tr>
             }

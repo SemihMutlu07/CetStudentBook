@@ -1,5 +1,6 @@
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using CetStudentBook.Data;
 using CetStudentBook.Models;
 
@@ -14,14 +15,19 @@ namespace CetStudentBook.Controllers
             _context = context;
         }
 
-        public ActionResult Index()
+        public ActionResult Index(int? categoryId)
         {
-            var books = _context.Books.ToList();
+            var query = _context.Books.Include(b => b.Category).AsQueryable();
+            if (categoryId.HasValue)
+                query = query.Where(b => b.CategoryId == categoryId.Value);
+            var books = query.ToList();
+            ViewBag.Categories = _context.Categories.ToList();
             return View(books);
         }
 
         public ActionResult Create()
         {
+            ViewBag.Categories = _context.Categories.ToList();
             return View();
         }
 
@@ -29,7 +35,11 @@ namespace CetStudentBook.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(Book book)
         {
-            if (!ModelState.IsValid) return View(book);
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Categories = _context.Categories.ToList();
+                return View(book);
+            }
 
             _context.Books.Add(book);
             _context.SaveChanges();
@@ -43,6 +53,7 @@ namespace CetStudentBook.Controllers
             var book = _context.Books.Find(id.Value);
             if (book == null) return NotFound();
 
+            ViewBag.Categories = _context.Categories.ToList();
             return View(book);
         }
 
@@ -50,7 +61,11 @@ namespace CetStudentBook.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(Book book)
         {
-            if (!ModelState.IsValid) return View(book);
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Categories = _context.Categories.ToList();
+                return View(book);
+            }
 
             _context.Books.Update(book);
             _context.SaveChanges();

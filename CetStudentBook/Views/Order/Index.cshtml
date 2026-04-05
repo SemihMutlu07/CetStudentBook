@@ -1,0 +1,50 @@
+@model List<CetStudentBook.Models.Order>
+
+@{
+    ViewData["Title"] = "My Orders";
+}
+
+<h1>My Orders</h1>
+<hr />
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        You have no orders yet. <a asp-controller="Books" asp-action="Index">Browse books</a>
+    </div>
+}
+else
+{
+    @foreach (var order in Model)
+    {
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between">
+                <span><strong>Order #@order.Id</strong> - @order.OrderDate.ToString("dd MMM yyyy HH:mm")</span>
+                <span class="fw-bold">Total: @order.TotalPrice.ToString("C")</span>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm mb-0">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in order.OrderItems)
+                        {
+                            <tr>
+                                <td>@item.ProductName</td>
+                                <td>@item.Price.ToString("C")</td>
+                                <td>@item.Quantity</td>
+                                <td>@((item.Price * item.Quantity).ToString("C"))</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+}

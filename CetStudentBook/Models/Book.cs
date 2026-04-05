@@ -22,5 +22,12 @@ namespace CetStudentBook.Models
 
         [System.ComponentModel.DataAnnotations.Required]
         public bool IsSecondHand { get; set; }
+
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.Range(0.01, 100000)]
+        public decimal Price { get; set; }
+
+        public int? CategoryId { get; set; }
+        public Category? Category { get; set; }
     }
 }
